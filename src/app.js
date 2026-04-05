@@ -62,7 +62,7 @@ app.get('/', (req, res) => {
   res.json({
     message: '🚀 Finance Data Processing API is running',
     database: 'Connected ✅',
-    documentation: `http://localhost:${process.env.PORT || 8000}/api-docs`
+    documentation: `${req.protocol}://${req.get('host')}/api-docs`
   });
 });
 
