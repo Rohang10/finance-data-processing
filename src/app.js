@@ -19,7 +19,7 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'Backend API for Finance Data Processing — Node.js + PostgreSQL',
     },
-    servers: [{ url: `http://localhost:${process.env.PORT || 8000}` }],
+    servers: [],
     components: {
       securitySchemes: {
         bearerAuth: {
