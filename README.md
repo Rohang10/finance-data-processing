@@ -33,7 +33,7 @@ DB_NAME=finance_db
 DB_USER=postgres
 DB_PASSWORD=your_password
 JWT_SECRET=supersecretkey
-PORT=8000
+
 ```
 
 ### 3. Database Initialization
