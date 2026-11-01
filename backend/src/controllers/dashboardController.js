@@ -64,9 +64,8 @@ const getByCategory = async (req, res) => {
 const getMonthlyTrend = async (req, res) => {
   const { startDate, endDate } = req.query;
 
-  // default to last 12 months if no range is given
-  const start = startDate || new Date(new Date().setFullYear(new Date().getFullYear() - 1))
-    .toISOString().split('T')[0];
+  // default to fetching all historical data if no range is given
+  const start = startDate || '2000-01-01';
   const end = endDate || new Date().toISOString().split('T')[0];
 
   try {

@@ -57,6 +57,8 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 }
 
+const pool = require('./config/database');
+
 // ─── Welcome / Status ──────────────────────────────────────────────────────
 app.get('/', (req, res) => {
   res.json({
@@ -64,6 +66,30 @@ app.get('/', (req, res) => {
     database: 'Connected ✅',
     documentation: `${req.protocol}://${req.get('host')}/api-docs`
   });
+});
+
+// ─── Health & Keep-Alive Endpoint ─────────────────────────────────────────
+app.get('/health', async (req, res) => {
+  const startTime = Date.now();
+  try {
+    const result = await pool.query('SELECT NOW() AS server_time, current_database() AS db');
+    const latency = Date.now() - startTime;
+    res.status(200).json({
+      status: 'healthy',
+      database: 'connected',
+      latency: `${latency}ms`,
+      server_time: result.rows[0].server_time,
+      database_name: result.rows[0].db,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    res.status(503).json({
+      status: 'unhealthy',
+      database: 'disconnected',
+      error: err.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
 });
 
 // ─── Swagger UI ────────────────────────────────────────────────────────────
@@ -74,6 +100,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/records', require('./routes/records'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/upload', require('./routes/uploadRoutes'));
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use((req, res) => {
